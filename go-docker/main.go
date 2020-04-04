@@ -12,7 +12,7 @@ var db *sql.DB
 
 func init() {
 	fmt.Println("Establishing connection ...")
-	tmpDB, err := sql.Open("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=books_database sslmode=disable", os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD")))
+	tmpDB, err := sql.Open("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=users_database sslmode=disable", os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD")))
 	if err != nil {
 		fmt.Println("error in sql.open")
 		log.Fatal(err)

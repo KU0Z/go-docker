@@ -27,12 +27,14 @@ func handleSaveBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := params.Get("name")
-	author := params.Get("author")
-
-	pagesStr := params.Get("pages")
-	pages := 0
-	if len(pagesStr) > 0 {
-		pages, err = strconv.Atoi(pagesStr)
+	lastname := params.Get("lastname")
+	faculty := params.Get("faculty")
+	carer := params.Get("carer")
+	
+	carneStr := params.Get("carne")
+	carne := 0
+	if len(carneStr) > 0 {
+		carne, err = strconv.Atoi(carneStr)
 		if err != nil {
 			renderErrorPage(w, err)
 			return
@@ -51,9 +53,9 @@ func handleSaveBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if id == 0 {
-		_, err = insertBook(name, author, pages, publicationDate)
+		_, err = insertBook(name, lastname, faculty, carer, carne, publicationDate)
 	} else {
-		_, err = updateBook(id, name, author, pages, publicationDate)
+		_, err = updateBook(id, name, lastname, faculty, carer, carne, publicationDate)
 	}
 
 	if err != nil {

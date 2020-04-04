@@ -55,9 +55,11 @@
                 <tr>
                   <th>#</th>
                   <th>Name</th>
-                  <th>Author</th>
-                  <th>Pages</th>
-                  <th>Publication Date</th>
+                  <th>Apellido</th>
+                  <th>Facultad</th>
+                  <th>Carrera</th>
+                  <th>Carne</th>
+                  <th>Fecha de Creación </th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -66,8 +68,10 @@
                 <tr>
                   <td>{{.ID}}</td>
                   <td>{{.Name}}</td>
-                  <td>{{.Author}}</td>
-                  <td>{{.Pages}}</td>
+                  <td>{{.LastName}}</td>
+                  <td>{{.Faculty}}</td>
+                  <td>{{.Carer}}</td>
+                  <td>{{.Carne}}</td>
                   <td>{{.PublicationDateStr}}</td>
                   <td><a href="book.html?id={{.ID}}">edit</a> - <a href="/delete?id={{.ID}}">delete</a></td>
                 </tr>

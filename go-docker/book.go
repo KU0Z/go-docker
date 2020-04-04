@@ -12,13 +12,15 @@ func getBook(bookID int) (Book, error) {
 
 	var id int
 	var name string
-	var author string
-	var pages int
+	var lastname string
+	var faculty string
+	var carer string
+	var carne int
 	var publicationDate pq.NullTime
 
-	err := db.QueryRow(`SELECT id, name, author, pages, publication_date FROM books where id = $1`, bookID).Scan(&id, &name, &author, &pages, &publicationDate)
+	err := db.QueryRow(`SELECT id, name, lastname, faculty, carer, carne, publication_date FROM users where id = $1`, bookID).Scan(&id, &name, &lastname, &faculty, &carer, &carne, &publicationDate)
 	if err == nil {
-		res = Book{ID: id, Name: name, Author: author, Pages: pages, PublicationDate: publicationDate.Time}
+		res = Book{ID: id, Name: name, LastName:lastname, Faculty:faculty, Carer:carer, Carne: carne, PublicationDate: publicationDate.Time}
 	}
 
 	return res, err
@@ -26,41 +28,43 @@ func getBook(bookID int) (Book, error) {
 
 func allBooks() ([]Book, error) {
 	//Retrieve
-	books := []Book{}
+	users := []Book{}
 
-	rows, err := db.Query(`SELECT id, name, author, pages, publication_date FROM books order by id`)
+	rows, err := db.Query(`SELECT id, name, lastname, faculty, carer, carne, publication_date FROM users order by id`)
 	defer rows.Close()
 	if err == nil {
 		for rows.Next() {
 			var id int
 			var name string
-			var author string
-			var pages int
+			var lastname string
+			var faculty string
+			var carer string
+			var carne int
 			var publicationDate pq.NullTime
 
-			err = rows.Scan(&id, &name, &author, &pages, &publicationDate)
+			err = rows.Scan(&id, &name, &lastname, &faculty, &carer, &carne, &publicationDate)
 			if err == nil {
-				currentBook := Book{ID: id, Name: name, Author: author, Pages: pages}
+				currentBook := Book{ID: id, Name: name, LastName:lastname, Faculty:faculty, Carer:carer, Carne: carne}
 				if publicationDate.Valid {
 					currentBook.PublicationDate = publicationDate.Time
 				}
 
-				books = append(books, currentBook)
+				users = append(users, currentBook)
 			} else {
-				return books, err
+				return users, err
 			}
 		}
 	} else {
-		return books, err
+		return users, err
 	}
 
-	return books, err
+	return users, err
 }
 
-func insertBook(name, author string, pages int, publicationDate time.Time) (int, error) {
+func insertBook(name, lastname string, faculty string, carer string, carne int, publicationDate time.Time) (int, error) {
 	//Create
 	var bookID int
-	err := db.QueryRow(`INSERT INTO books(name, author, pages, publication_date) VALUES($1, $2, $3, $4) RETURNING id`, name, author, pages, publicationDate).Scan(&bookID)
+	err := db.QueryRow(`INSERT INTO users(name, lastname, faculty, carer, carne, publication_date) VALUES($1, $2, $3, $4, $5, $6) RETURNING id`, name, lastname, faculty, carer, carne, publicationDate).Scan(&bookID)
 
 	if err != nil {
 		return 0, err
@@ -70,9 +74,9 @@ func insertBook(name, author string, pages int, publicationDate time.Time) (int,
 	return bookID, err
 }
 
-func updateBook(id int, name, author string, pages int, publicationDate time.Time) (int, error) {
+func updateBook(id int, name, lastname string, faculty string, carer string, carne int, publicationDate time.Time) (int, error) {
 	//Create
-	res, err := db.Exec(`UPDATE books set name=$1, author=$2, pages=$3, publication_date=$4 where id=$5 RETURNING id`, name, author, pages, publicationDate, id)
+	res, err := db.Exec(`UPDATE users set name=$1, lastname=$2, faculty=$3, carer=$4, carne=$5, publication_date=$6 where id=$7 RETURNING id`, name, lastname, faculty, carer, carne, publicationDate, id)
 	if err != nil {
 		return 0, err
 	}
@@ -87,7 +91,7 @@ func updateBook(id int, name, author string, pages int, publicationDate time.Tim
 
 func removeBook(bookID int) (int, error) {
 	//Delete
-	res, err := db.Exec(`delete from books where id = $1`, bookID)
+	res, err := db.Exec(`delete from users where id = $1`, bookID)
 	if err != nil {
 		return 0, err
 	}

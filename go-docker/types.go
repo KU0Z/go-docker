@@ -18,9 +18,11 @@ type BookPage struct {
 type Book struct {
 	ID              int
 	Name            string
-	Author          string
+	LastName        string
+	Faculty         string
+	Carer          	string
 	PublicationDate time.Time
-	Pages           int
+	Carne           int
 }
 
 //PublicationDateStr returns a sanitized Publication Date in the format YYYY-MM-DD
