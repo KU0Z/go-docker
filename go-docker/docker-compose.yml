@@ -1,5 +1,33 @@
 version: '3'
 services:
+  loadbalancer:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: nginxbalancer:001
+    container_name: loadbalancer
+    ports:
+      - 192.168.0.164:8080:80
+    networks: 
+      mynetredes3:
+       ipv4_address: 192.168.0.164
+  goapp2:
+    build:
+      context: ./go-docker2
+      dockerfile: Dockerfile
+    image: goapp2:latest
+    container_name: goapp2redesv3
+    ports:
+      - 192.168.0.162:8080:8080
+    networks: 
+      mynetredes3:
+       ipv4_address: 192.168.0.162
+    environment:
+      DB_HOST: psql
+      DB_USER: demo
+      DB_PASSWORD: admin123
+    depends_on:
+      - psql
   goapp:
     build:
       context: .
@@ -7,7 +35,10 @@ services:
     image: goapp:compose
     container_name: goappredesv3
     ports:
-      - 192.168.0.33:8080:8080
+      - 192.168.0.161:8080:8080
+    networks: 
+      mynetredes3:
+       ipv4_address: 192.168.0.161
     environment:
       DB_HOST: psql
       DB_USER: demo
@@ -20,7 +51,10 @@ services:
       dockerfile: Dockerfile
     image: goapp-postgres:compose
     ports:
-      - 192.168.0.33:5432:5432
+      - 192.168.0.163:5432:5432
+    networks: 
+      mynetredes3:
+       ipv4_address: 192.168.0.163
     volumes:
       - postgres-data:/var/lib/postgresql/data      
     environment:
@@ -28,4 +62,15 @@ services:
       POSTGRES_PASSWORD: admin123
 volumes:
   postgres-data:
-
+networks:
+    mynetredes3: 
+      driver: macvlan
+      driver_opts:
+        parent: enp0s9
+        com.docker.network.enable_ipv4: "true"
+      ipam:
+        config:
+         - subnet: 192.168.0.0/24
+          #gateway: 192.168.0.1
+          #ip-range: 192.168.0.160/25
+          #aux-address: 192.168.0.9
