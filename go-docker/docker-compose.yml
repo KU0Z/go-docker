@@ -1,31 +1,49 @@
 version: '3'
-services:
-  goapp:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: goapp:compose
-    container_name: goappredesv3
-    ports:
-      - 192.168.0.33:8080:8080
-    environment:
-      DB_HOST: psql
-      DB_USER: demo
-      DB_PASSWORD: admin123
-    depends_on:
-      - psql
-  psql:
-    build:
-      context: ./datastore
-      dockerfile: Dockerfile
-    image: goapp-postgres:compose
-    ports:
-      - 192.168.0.33:5432:5432
-    volumes:
-      - postgres-data:/var/lib/postgresql/data      
-    environment:
-      POSTGRES_USER: demo
-      POSTGRES_PASSWORD: admin123
-volumes:
-  postgres-data:
 
+services:
+  loadbalancer:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: nginxbalancer:002
+    container_name: loadbalancer2
+    ports:
+      - 172.20.5.6:8080:80
+    networks: 
+      mynetredes3:
+       ipv4_address: 172.20.5.6
+  app1:
+    container_name: docker-node1
+    build:
+      context: ./docker-node1
+      dockerfile: Dockerfile
+    image: node1:001
+    ports:
+      - "172.20.5.7:8080:8080"
+    restart: always
+    command: npm start
+    networks: 
+      mynetredes3:
+       ipv4_address: 172.20.5.7
+  app2:
+    container_name: docker-node2
+    build:
+      context: ./docker-node2
+      dockerfile: Dockerfile
+    image: node2:001
+    ports:
+      - "172.20.5.8:8080:8080"
+    restart: always
+    command: npm start
+    networks: 
+      mynetredes3:
+       ipv4_address: 172.20.5.8
+networks:
+    mynetredes3: 
+      driver: macvlan
+      driver_opts:
+        parent: enp0s9
+        com.docker.network.enable_ipv4: "true"
+      ipam:
+        config:
+         - subnet: 172.20.5.0/28
