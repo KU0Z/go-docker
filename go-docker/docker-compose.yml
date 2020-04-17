@@ -5,45 +5,45 @@ services:
     build:
       context: ./nginx
       dockerfile: Dockerfile
-    image: nginxbalancer:002
+    image: nginxbalancer:latest
     container_name: loadbalancer2
     ports:
-      - 172.20.5.6:8080:80
+      - 172.20.4.6:8080:80
     networks: 
       mynetredes3:
-       ipv4_address: 172.20.5.6
+       ipv4_address: 172.20.4.6
   app1:
     container_name: docker-node1
     build:
       context: ./docker-node1
       dockerfile: Dockerfile
-    image: node1:001
+    image: node1-1:latest
     ports:
-      - "172.20.5.7:8080:8080"
+      - "172.20.4.7:8080:8080"
     restart: always
     command: npm start
     networks: 
       mynetredes3:
-       ipv4_address: 172.20.5.7
+       ipv4_address: 172.20.4.7
   app2:
     container_name: docker-node2
     build:
       context: ./docker-node2
       dockerfile: Dockerfile
-    image: node2:001
+    image: node2-2:latest
     ports:
-      - "172.20.5.8:8080:8080"
+      - "172.20.4.8:8080:8080"
     restart: always
     command: npm start
     networks: 
       mynetredes3:
-       ipv4_address: 172.20.5.8
+       ipv4_address: 172.20.4.8
 networks:
     mynetredes3: 
       driver: macvlan
       driver_opts:
-        parent: enp0s9
+        parent: enp0s3
         com.docker.network.enable_ipv4: "true"
       ipam:
         config:
-         - subnet: 172.20.5.0/28
+         - subnet: 172.20.4.0/28
