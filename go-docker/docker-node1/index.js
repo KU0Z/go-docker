@@ -12,10 +12,10 @@ const app = express();
  
 //Create connection
 const conn = mysql.createConnection({
-  host: 'mysql-dev',
+  host: '172.20.4.4',
   user: 'root',
-  password: 'root',
-  database: 'node_crud'
+  password: 'toor',
+  database: 'dev2_db'
 });
  
 //connect to database
