@@ -2,7 +2,9 @@ version: '3'
 services:
   mysql1:
     container_name: mysql1
-    image: mysql:latest
+    build:
+      context: ./server1
+      dockerfile: Dockerfile
     ports:
       - "192.168.0.173:3306:3306"
     networks: 
@@ -10,18 +12,19 @@ services:
        ipv4_address: 192.168.0.173
     restart: always
     volumes:
-    - ./home/opt2/mysql1/mysql1/conf.d:/etc/mysql/mysql.conf.d/
-    - ./home/opt2/mysql1/data:/var/lib/mysql
-    - ./home/opt2/mysql1/log:/var/log/mysql
-    - ./home/opt2/mysql1/backup:/backup
+    - ./server1/data:/var/lib/mysql
+    - ./server1/log:/var/log/mysql
+    - ./server1/backup:/backup
     environment:
       MYSQL_ROOT_PASSWORD: toor
-      MYSQL_DATABASE: dev2_db
+      MYSQL_DATABASE: mydata
       MYSQL_USER: root
       MYSQL_PASSWORD: toor
   mysql2:
     container_name: mysql2
-    image: mysql:latest
+    build:
+      context: ./server2
+      dockerfile: Dockerfile
     ports:
       - "192.168.0.174:3306:3306"
     networks: 
@@ -29,13 +32,12 @@ services:
        ipv4_address: 192.168.0.174
     restart: always
     volumes:
-    - ./home/opt2/mysql/mysql2/conf.d:/etc/mysql/mysql.conf.d/
-    - ./home/opt2/mysql/mysql2/data:/var/lib/mysql
-    - ./home/opt2/mysql/mysql2/log:/var/log/mysql
-    - ./home/opt2/mysql/mysql2/backup:/backup
+    - ./server2/data:/var/lib/mysql
+    - ./server2/log:/var/log/mysql
+    - ./server2/backup:/backup
     environment:
       MYSQL_ROOT_PASSWORD: toor
-      MYSQL_DATABASE: dev2_db
+      MYSQL_DATABASE: mydata
       MYSQL_USER: root
       MYSQL_PASSWORD: toor
   haproxy-logger:
@@ -48,7 +50,7 @@ services:
       default:
        ipv4_address: 192.168.0.172
     volumes:
-      - ./home/opt2/mysql/logs:/var/log/
+      - ./opt2/mysql/logs:/var/log/
   mysql-cluster:
     container_name: mysql-cluster
     build:
