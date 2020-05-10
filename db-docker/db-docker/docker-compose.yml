@@ -1,0 +1,66 @@
+version: '3'
+services:
+  mysql1:
+    container_name: mysql1
+    image: mysql:latest
+    ports:
+      - "192.168.0.173:3306:3306"
+    networks: 
+      default:
+       ipv4_address: 192.168.0.173
+    restart: always
+    volumes:
+    - ./home/opt2/mysql1/mysql1/conf.d:/etc/mysql/mysql.conf.d/
+    - ./home/opt2/mysql1/data:/var/lib/mysql
+    - ./home/opt2/mysql1/log:/var/log/mysql
+    - ./home/opt2/mysql1/backup:/backup
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: dev2_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: toor
+  mysql2:
+    container_name: mysql2
+    image: mysql:latest
+    ports:
+      - "192.168.0.174:3306:3306"
+    networks: 
+      default:
+       ipv4_address: 192.168.0.174
+    restart: always
+    volumes:
+    - ./home/opt2/mysql/mysql2/conf.d:/etc/mysql/mysql.conf.d/
+    - ./home/opt2/mysql/mysql2/data:/var/lib/mysql
+    - ./home/opt2/mysql/mysql2/log:/var/log/mysql
+    - ./home/opt2/mysql/mysql2/backup:/backup
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: dev2_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: toor
+  haproxy-logger:
+    image: voxxit/rsyslog
+    container_name: haproxy-logger
+    ports:
+      - 192.168.0.172:514:514/tcp
+      - 192.168.0.172:514:514/udp 
+    networks: 
+      default:
+       ipv4_address: 192.168.0.172
+    volumes:
+      - ./home/opt2/mysql/logs:/var/log/
+  mysql-cluster:
+    container_name: mysql-cluster
+    build:
+      context: ./haproxy
+      dockerfile: Dockerfile
+    ports:
+      - 192.168.0.171:33060:3306
+      - 192.168.0.171:8080:8080
+    networks: 
+      default:
+       ipv4_address: 192.168.0.171 
+networks:
+  default:
+    external:
+      name: doker-webserber_mynetredes3
